@@ -1,0 +1,2590 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHINAE Coffee Bank - 雾培咖啡产业数字金融平台</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* X.com风格主题 */
+        :root {
+            --x-bg: #000000;
+            --x-card-bg: #16181c;
+            --x-border: #2f3336;
+            --x-text-primary: #e7e9ea;
+            --x-text-secondary: #71767b;
+            --x-accent: #1d9bf0;
+            --x-accent-hover: #1a8cd8;
+            --x-success: #00ba7c;
+            --x-warning: #ffd400;
+            --x-error: #f91880;
+            --x-transition: all 0.2s ease;
+            --x-radius: 16px;
+            --x-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
+            --x-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--x-font);
+            background-color: var(--x-bg);
+            color: var(--x-text-primary);
+            line-height: 1.5;
+            overflow-x: hidden;
+            font-size: 15px;
+        }
+        
+        /* 主容器 */
+        .app-container {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* 内容区域 */
+        .content-area {
+            margin-top: 60px;
+            transition: opacity 0.3s ease;
+            flex: 1;
+        }
+        
+        .page-section {
+            min-height: calc(100vh - 60px);
+            padding: 0;
+            display: none;
+            animation: fadeIn 0.3s ease forwards;
+        }
+        
+        .page-section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* 导航栏 - X风格 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            height: 60px;
+            background-color: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--x-border);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--x-text-primary);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--x-transition);
+        }
+        
+        .logo:hover {
+            background-color: rgba(29, 155, 240, 0.1);
+        }
+        
+        .logo i {
+            margin-right: 8px;
+            color: var(--x-accent);
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            height: 100%;
+            align-items: center;
+        }
+        
+        .nav-links li {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        
+        .nav-links a {
+            color: var(--x-text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--x-transition);
+            padding: 12px 16px;
+            border-radius: 9999px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 15px;
+        }
+        
+        .nav-links a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-links a.active {
+            font-weight: 700;
+        }
+        
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            background-color: var(--x-accent);
+            border-radius: 50%;
+        }
+        
+        .nav-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 9999px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--x-transition);
+            border: none;
+            font-size: 15px;
+            font-family: var(--x-font);
+        }
+        
+        .btn-login {
+            background: transparent;
+            color: var(--x-text-primary);
+            border: 1px solid var(--x-border);
+        }
+        
+        .btn-login:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .btn-primary {
+            background-color: var(--x-accent);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--x-accent-hover);
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--x-text-primary);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--x-transition);
+        }
+        
+        .mobile-menu-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* 首页样式 - X风格 - 居中排版 */
+        .hero {
+            padding: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+            border-bottom: 1px solid var(--x-border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            justify-content: center;
+            min-height: calc(100vh - 60px);
+        }
+        
+        .hero h1 {
+            font-size: 64px;
+            font-weight: 900;
+            margin-bottom: 24px;
+            letter-spacing: -0.025em;
+            max-width: 900px;
+        }
+        
+        .hero p {
+            font-size: 31px;
+            color: var(--x-text-secondary);
+            margin-bottom: 32px;
+            max-width: 800px;
+        }
+        
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 48px;
+            justify-content: center;
+        }
+        
+        .hero-stats {
+            display: flex;
+            gap: 48px;
+            padding-top: 32px;
+            border-top: 1px solid var(--x-border);
+            justify-content: center;
+            width: 100%;
+            max-width: 1000px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            flex: 1;
+            max-width: 200px;
+        }
+        
+        .stat-number {
+            font-size: 48px;
+            font-weight: 900;
+            color: var(--x-text-primary);
+            display: block;
+            line-height: 1;
+        }
+        
+        .stat-label {
+            color: var(--x-text-secondary);
+            font-size: 15px;
+            margin-top: 8px;
+        }
+        
+        /* 战略驾驶舱 - X风格 */
+        .dashboard-section {
+            padding: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            font-size: 31px;
+            font-weight: 900;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .section-subtitle {
+            color: var(--x-text-secondary);
+            font-size: 15px;
+            margin-bottom: 32px;
+            max-width: 600px;
+        }
+        
+        .dashboard-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--x-border);
+        }
+        
+        .time-range {
+            display: flex;
+            background-color: var(--x-card-bg);
+            border-radius: 9999px;
+            padding: 4px;
+            border: 1px solid var(--x-border);
+        }
+        
+        .time-btn {
+            padding: 8px 16px;
+            background: transparent;
+            border: none;
+            color: var(--x-text-secondary);
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: var(--x-transition);
+            font-weight: 500;
+            font-size: 15px;
+        }
+        
+        .time-btn.active {
+            background-color: var(--x-card-bg);
+            color: var(--x-text-primary);
+            font-weight: 700;
+        }
+        
+        .data-refresh {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .refresh-time {
+            color: var(--x-text-secondary);
+            font-size: 13px;
+        }
+        
+        .refresh-btn {
+            background-color: transparent;
+            color: var(--x-text-secondary);
+            border: 1px solid var(--x-border);
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--x-transition);
+        }
+        
+        .refresh-btn:hover {
+            background-color: rgba(29, 155, 240, 0.1);
+            color: var(--x-accent);
+            border-color: var(--x-accent);
+        }
+        
+        /* Dashboard 网格布局 */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            grid-template-rows: auto;
+            gap: 16px;
+            margin-top: 24px;
+        }
+        
+        .card {
+            background-color: var(--x-card-bg);
+            border-radius: var(--x-radius);
+            padding: 20px;
+            border: 1px solid var(--x-border);
+            transition: var(--x-transition);
+        }
+        
+        .card:hover {
+            background-color: rgba(29, 155, 240, 0.03);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .card-title i {
+            color: var(--x-accent);
+        }
+        
+        .card-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .card-action-btn {
+            background: transparent;
+            border: 1px solid var(--x-border);
+            color: var(--x-text-secondary);
+            cursor: pointer;
+            transition: var(--x-transition);
+            padding: 6px;
+            border-radius: 8px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .card-action-btn:hover {
+            color: var(--x-accent);
+            border-color: var(--x-accent);
+            background-color: rgba(29, 155, 240, 0.1);
+        }
+        
+        /* 卡片大小定义 */
+        .card-large {
+            grid-column: span 8;
+        }
+        
+        .card-medium {
+            grid-column: span 4;
+        }
+        
+        .card-small {
+            grid-column: span 3;
+        }
+        
+        /* 图表容器 */
+        .chart-container {
+            position: relative;
+            height: 280px;
+            width: 100%;
+        }
+        
+        /* 服务卡片 */
+        .services-section {
+            padding: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 24px;
+        }
+        
+        .service-card {
+            background-color: var(--x-card-bg);
+            border-radius: var(--x-radius);
+            padding: 24px;
+            border: 1px solid var(--x-border);
+            transition: var(--x-transition);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .service-card:hover {
+            background-color: rgba(29, 155, 240, 0.05);
+            border-color: var(--x-accent);
+        }
+        
+        .service-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background-color: rgba(29, 155, 240, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            font-size: 24px;
+            color: var(--x-accent);
+        }
+        
+        .service-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        
+        .service-desc {
+            color: var(--x-text-secondary);
+            margin-bottom: 20px;
+            flex-grow: 1;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        
+        .service-features {
+            margin-bottom: 20px;
+        }
+        
+        .service-features li {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        
+        .service-features i {
+            color: var(--x-success);
+            font-size: 12px;
+        }
+        
+        /* 数据标签交互 */
+        .data-tag {
+            display: inline-block;
+            padding: 6px 12px;
+            background-color: rgba(29, 155, 240, 0.1);
+            color: var(--x-accent);
+            border-radius: 9999px;
+            font-size: 13px;
+            margin: 4px 8px 4px 0;
+            cursor: pointer;
+            transition: var(--x-transition);
+            border: 1px solid transparent;
+            font-weight: 500;
+        }
+        
+        .data-tag:hover {
+            background-color: rgba(29, 155, 240, 0.2);
+            border-color: var(--x-accent);
+        }
+        
+        /* 合作伙伴区域 */
+        .partners-section {
+            padding: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+            border-top: 1px solid var(--x-border);
+        }
+        
+        .partners {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 32px;
+            margin-top: 24px;
+        }
+        
+        .partner-logo {
+            font-size: 40px;
+            color: var(--x-text-secondary);
+            transition: var(--x-transition);
+            cursor: pointer;
+            padding: 16px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+        }
+        
+        .partner-logo:hover {
+            color: var(--x-accent);
+            background-color: rgba(29, 155, 240, 0.1);
+            border-color: var(--x-accent);
+        }
+        
+        /* 登录页面 */
+        .login-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 60px);
+            padding: 20px;
+        }
+        
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            background-color: var(--x-card-bg);
+            border-radius: var(--x-radius);
+            padding: 32px;
+            border: 1px solid var(--x-border);
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .login-header h2 {
+            font-size: 31px;
+            font-weight: 900;
+            margin-bottom: 8px;
+        }
+        
+        .login-header p {
+            color: var(--x-text-secondary);
+            font-size: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--x-text-primary);
+            font-weight: 500;
+            font-size: 15px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 8px;
+            background-color: transparent;
+            border: 1px solid var(--x-border);
+            color: var(--x-text-primary);
+            font-size: 15px;
+            font-family: var(--x-font);
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--x-accent);
+        }
+        
+        .login-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .forgot-password {
+            color: var(--x-accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+        
+        /* 联系页面 */
+        .contact-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 60px);
+            padding: 20px;
+        }
+        
+        .contact-container {
+            width: 100%;
+            max-width: 500px;
+            background-color: var(--x-card-bg);
+            border-radius: var(--x-radius);
+            padding: 32px;
+            border: 1px solid var(--x-border);
+            text-align: center;
+        }
+        
+        .contact-icon {
+            font-size: 48px;
+            color: var(--x-accent);
+            margin-bottom: 20px;
+        }
+        
+        .contact-info {
+            margin-top: 32px;
+        }
+        
+        .contact-method {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+            padding: 16px;
+            background-color: transparent;
+            border: 1px solid var(--x-border);
+            border-radius: 12px;
+            text-align: left;
+            transition: var(--x-transition);
+        }
+        
+        .contact-method:hover {
+            border-color: var(--x-accent);
+            background-color: rgba(29, 155, 240, 0.05);
+        }
+        
+        .contact-method i {
+            color: var(--x-accent);
+            font-size: 24px;
+            width: 40px;
+        }
+        
+        /* 服务详情页面 */
+        .service-detail-section {
+            padding: 32px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .service-detail-container {
+            background-color: var(--x-card-bg);
+            border-radius: var(--x-radius);
+            padding: 32px;
+            border: 1px solid var(--x-border);
+        }
+        
+        .service-detail-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .service-detail-icon {
+            font-size: 48px;
+            color: var(--x-accent);
+            margin-bottom: 16px;
+        }
+        
+        .back-button {
+            background: transparent;
+            border: 1px solid var(--x-border);
+            color: var(--x-text-primary);
+            font-size: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border-radius: 9999px;
+            margin-bottom: 24px;
+            transition: var(--x-transition);
+        }
+        
+        .back-button:hover {
+            border-color: var(--x-accent);
+            background-color: rgba(29, 155, 240, 0.1);
+        }
+        
+        /* 合作伙伴详情模态框 */
+        .partner-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--x-transition);
+        }
+        
+        .partner-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .partner-modal-content {
+            background-color: var(--x-card-bg);
+            border-radius: var(--x-radius);
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid var(--x-border);
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+        
+        .partner-modal.active .partner-modal-content {
+            transform: translateY(0);
+        }
+        
+        .partner-modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: transparent;
+            border: none;
+            color: var(--x-text-secondary);
+            font-size: 20px;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--x-transition);
+        }
+        
+        .partner-modal-close:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--x-text-primary);
+        }
+        
+        /* 页脚 */
+        .footer {
+            background-color: var(--x-bg);
+            padding: 32px 16px;
+            margin-top: 32px;
+            border-top: 1px solid var(--x-border);
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .footer-logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--x-text-primary);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-links a {
+            color: var(--x-text-secondary);
+            text-decoration: none;
+            transition: var(--x-transition);
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .footer-links a:hover {
+            color: var(--x-accent);
+            text-decoration: underline;
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 32px;
+            padding-top: 16px;
+            border-top: 1px solid var(--x-border);
+            color: var(--x-text-secondary);
+            font-size: 13px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .card-large {
+                grid-column: span 12;
+            }
+            
+            .card-medium {
+                grid-column: span 6;
+            }
+            
+            .card-small {
+                grid-column: span 4;
+            }
+            
+            .hero-stats {
+                max-width: 900px;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .navbar {
+                padding: 0 12px;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero h1 {
+                font-size: 48px;
+            }
+            
+            .hero p {
+                font-size: 24px;
+            }
+            
+            .section-title {
+                font-size: 24px;
+            }
+            
+            .hero-stats {
+                flex-direction: column;
+                gap: 24px;
+                align-items: center;
+            }
+            
+            .stat-item {
+                max-width: 300px;
+            }
+            
+            .stat-number {
+                font-size: 36px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hero {
+                padding: 24px 16px;
+            }
+            
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .hero p {
+                font-size: 20px;
+            }
+            
+            .dashboard-section, .services-section, .partners-section {
+                padding: 24px 16px;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .card-large, .card-medium, .card-small {
+                grid-column: span 1;
+            }
+            
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-controls {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+            
+            .service-detail-section {
+                padding: 16px;
+            }
+            
+            .hero-stats {
+                gap: 20px;
+                padding-top: 20px;
+            }
+            
+            .stat-item {
+                max-width: 100%;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .hero h1 {
+                font-size: 28px;
+            }
+            
+            .hero p {
+                font-size: 18px;
+            }
+            
+            .section-title {
+                font-size: 20px;
+            }
+            
+            .hero-actions {
+                flex-direction: column;
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .nav-actions {
+                display: none;
+            }
+            
+            .stat-number {
+                font-size: 32px;
+            }
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .fade-in {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+        
+        /* 工具类 */
+        .live-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 8px;
+            background-color: var(--x-error);
+            color: white;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-left: 8px;
+        }
+        
+        .metric-value {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--x-text-primary);
+            line-height: 1;
+        }
+        
+        .metric-label {
+            color: var(--x-text-secondary);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+        
+        .positive {
+            color: var(--x-success);
+        }
+        
+        .negative {
+            color: var(--x-error);
+        }
+        
+        .trend-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        /* X.com风格滚动条 */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--x-border);
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--x-text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 导航栏 -->
+        <nav class="navbar">
+            <div class="logo" id="homeLink">
+                <i class="fas fa-coffee"></i>
+                SHINAE Coffee Bank
+            </div>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <ul class="nav-links" id="navLinks">
+                <li><a data-page="home" class="active">
+                    <i class="fas fa-home"></i>
+                    <span>首页</span>
+                </a></li>
+                <li><a data-page="dashboard">
+                    <i class="fas fa-chart-line"></i>
+                    <span>驾驶舱</span>
+                </a></li>
+                <li><a data-page="services">
+                    <i class="fas fa-cube"></i>
+                    <span>服务</span>
+                </a></li>
+                <li><a data-page="partners">
+                    <i class="fas fa-handshake"></i>
+                    <span>合作伙伴</span>
+                </a></li>
+            </ul>
+            
+            <div class="nav-actions">
+                <button class="btn btn-login" id="loginBtn">登录</button>
+                <button class="btn btn-primary" id="contactBtn">联系我们</button>
+            </div>
+        </nav>
+
+        <!-- 内容区域 -->
+        <div class="content-area" id="contentArea">
+            <!-- 首页 - 居中排版 -->
+            <section id="home" class="page-section active">
+                <div class="hero">
+                    <h1 class="fade-in">重新定义咖啡产业价值流通</h1>
+                    <p class="fade-in">全球首个雾培咖啡数字金融与供应链服务平台，整合智能仓储、供应链金融、交易平台与保险服务，为咖啡产业提供一站式解决方案。</p>
+                    
+                    <div class="hero-actions fade-in">
+                        <button class="btn btn-primary" id="freeTrialBtn">免费试用</button>
+                        <button class="btn btn-login" id="demoBtn">查看演示</button>
+                    </div>
+                    
+                    <div class="hero-stats fade-in">
+                        <div class="stat-item">
+                            <span class="stat-number" id="stat1">1,250</span>
+                            <span class="stat-label">注册种植户</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="stat2">8,420</span>
+                            <span class="stat-label">吨咖啡豆仓储</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="stat3">¥3.2亿</span>
+                            <span class="stat-label">累计交易额</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="stat4">96.5%</span>
+                            <span class="stat-label">用户满意度</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 战略驾驶舱 -->
+            <section id="dashboard" class="page-section">
+                <div class="dashboard-section">
+                    <h2 class="section-title">战略驾驶舱 <span class="live-badge">实时</span></h2>
+                    <p class="section-subtitle">一站式数据决策中心，监控全球咖啡市场动态，管理您的资产与交易</p>
+                    
+                    <div class="dashboard-controls">
+                        <div class="time-range">
+                            <button class="time-btn active">今日</button>
+                            <button class="time-btn">本周</button>
+                            <button class="time-btn">本月</button>
+                            <button class="time-btn">本年</button>
+                        </div>
+                        
+                        <div class="data-refresh">
+                            <span class="refresh-time">数据更新时间: <span id="currentTime">14:32:05</span></span>
+                            <button class="refresh-btn" id="refreshBtn">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-grid">
+                        <!-- 市场总览卡片 -->
+                        <div class="card card-large">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <i class="fas fa-chart-line"></i>
+                                    咖啡豆市场总览
+                                </h3>
+                                <div class="card-actions">
+                                    <button class="card-action-btn">
+                                        <i class="fas fa-expand"></i>
+                                    </button>
+                                    <button class="card-action-btn">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="marketChart"></canvas>
+                            </div>
+                            <div style="margin-top: 16px;">
+                                <span class="data-tag" data-info="Arabica期货价格">Arabica期货</span>
+                                <span class="data-tag" data-info="Robusta现货价格">Robusta现货</span>
+                                <span class="data-tag" data-info="云南雾培精品豆">雾培精品豆</span>
+                                <span class="data-tag" data-info="巴西传统豆">传统土培豆</span>
+                            </div>
+                        </div>
+                        
+                        <!-- 资产总览卡片 -->
+                        <div class="card card-medium">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <i class="fas fa-wallet"></i>
+                                    我的资产总览
+                                </h3>
+                            </div>
+                            <div style="margin-top: 16px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
+                                    <div>
+                                        <div class="metric-value">¥2,845,000</div>
+                                        <div class="metric-label">仓储资产价值</div>
+                                    </div>
+                                    <div class="trend-indicator positive">
+                                        <i class="fas fa-arrow-up"></i>
+                                        2.3%
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
+                                    <div>
+                                        <div class="metric-value">¥850,000</div>
+                                        <div class="metric-label">借贷余额</div>
+                                    </div>
+                                    <div class="trend-indicator negative">
+                                        <i class="fas fa-arrow-down"></i>
+                                        1.1%
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; justify-content: space-between;">
+                                    <div>
+                                        <div class="metric-value">¥150,000</div>
+                                        <div class="metric-label">交易账户余额</div>
+                                    </div>
+                                    <div class="trend-indicator positive">
+                                        <i class="fas fa-arrow-up"></i>
+                                        5.7%
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" style="width: 100%; margin-top: 16px;">
+                                <i class="fas fa-plus-circle"></i> 申请增加额度
+                            </button>
+                        </div>
+                        
+                        <!-- 快速交易卡片 -->
+                        <div class="card card-medium">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <i class="fas fa-exchange-alt"></i>
+                                    快速交易平台
+                                </h3>
+                            </div>
+                            <div style="margin-top: 16px;">
+                                <div style="background-color: rgba(255,255,255,0.05); padding: 12px; border-radius: 12px; margin-bottom: 12px;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                        <span>Arabica期货</span>
+                                        <span class="positive">¥185.50 <small>(+1.2%)</small></span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                        <span>云南雾培豆</span>
+                                        <span class="positive">¥210.30 <small>(+2.8%)</small></span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span>巴西传统豆</span>
+                                        <span class="negative">¥165.80 <small>(-0.5%)</small></span>
+                                    </div>
+                                </div>
+                                
+                                <div style="margin-bottom: 12px;">
+                                    <label style="display: block; margin-bottom: 8px; color: var(--x-text-secondary);">交易类型</label>
+                                    <div style="display: flex; gap: 8px;">
+                                        <button class="btn" style="flex: 1; background-color: var(--x-success); color: white;">买入</button>
+                                        <button class="btn" style="flex: 1; background-color: transparent; border: 1px solid var(--x-border);">卖出</button>
+                                    </div>
+                                </div>
+                                
+                                <div style="margin-bottom: 12px;">
+                                    <label style="display: block; margin-bottom: 8px; color: var(--x-text-secondary);">数量 (吨)</label>
+                                    <input type="number" value="1" min="0.1" step="0.1" style="width: 100%; padding: 12px; border-radius: 8px; background-color: transparent; border: 1px solid var(--x-border); color: var(--x-text-primary);">
+                                </div>
+                                
+                                <button class="btn btn-primary" style="width: 100%;">
+                                    <i class="fas fa-bolt"></i> 立即交易
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- 风险监控卡片 -->
+                        <div class="card card-small">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <i class="fas fa-shield-alt"></i>
+                                    风险监控
+                                </h3>
+                            </div>
+                            <div style="text-align: center; margin-top: 16px;">
+                                <div class="chart-container" style="height: 140px;">
+                                    <canvas id="riskChart"></canvas>
+                                </div>
+                                <div style="margin-top: 16px;">
+                                    <div class="metric-label">价格波动率</div>
+                                    <div class="metric-value">12.3%</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 智能提醒卡片 -->
+                        <div class="card card-small">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <i class="fas fa-bell"></i>
+                                    智能提醒
+                                </h3>
+                            </div>
+                            <div style="margin-top: 16px;">
+                                <div style="padding: 12px; background-color: rgba(0, 186, 124, 0.1); border-radius: 8px; margin-bottom: 12px; border-left: 4px solid var(--x-success);">
+                                    <div style="font-weight: 700;">仓储续期提醒</div>
+                                    <div style="font-size: 13px; color: var(--x-text-secondary);">3天后到期 - 云南仓</div>
+                                </div>
+                                
+                                <div style="padding: 12px; background-color: rgba(255, 212, 0, 0.1); border-radius: 8px; margin-bottom: 12px; border-left: 4px solid var(--x-warning);">
+                                    <div style="font-weight: 700;">价格波动预警</div>
+                                    <div style="font-size: 13px; color: var(--x-text-secondary);">Arabica期货波动超5%</div>
+                                </div>
+                                
+                                <div style="padding: 12px; background-color: rgba(249, 24, 128, 0.1); border-radius: 8px; border-left: 4px solid var(--x-error);">
+                                    <div style="font-weight: 700;">贷款到期通知</div>
+                                    <div style="font-size: 13px; color: var(--x-text-secondary);">7天后到期 - ¥150,000</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 仓储热力图卡片 -->
+                        <div class="card card-large">
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    <i class="fas fa-map-marked-alt"></i>
+                                    全球仓储热力图
+                                </h3>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="storageChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 核心服务展示 -->
+            <section id="services" class="page-section">
+                <div class="services-section">
+                    <h2 class="section-title">核心服务</h2>
+                    <p class="section-subtitle">我们为雾培及传统咖啡种植户提供全方位金融与供应链解决方案</p>
+                    
+                    <div class="services-grid">
+                        <!-- 智能云仓服务 -->
+                        <div class="service-card fade-in">
+                            <div class="service-icon">
+                                <i class="fas fa-warehouse"></i>
+                            </div>
+                            <h3 class="service-title">智能云仓服务</h3>
+                            <p class="service-desc">基于物联网与区块链技术的智能仓储，实现咖啡豆全程可追溯与安全存储</p>
+                            
+                            <ul class="service-features">
+                                <li><i class="fas fa-check-circle"></i> 物联网实时监控温湿度</li>
+                                <li><i class="fas fa-check-circle"></i> 区块链存证，防篡改</li>
+                                <li><i class="fas fa-check-circle"></i> 按重量计费，灵活租赁</li>
+                                <li><i class="fas fa-check-circle"></i> 全球仓库网络覆盖</li>
+                            </ul>
+                            
+                            <button class="btn btn-primary" data-service="cloud-storage">
+                                <i class="fas fa-search"></i> 查看我的库存
+                            </button>
+                        </div>
+                        
+                        <!-- 供应链金融 -->
+                        <div class="service-card fade-in">
+                            <div class="service-icon">
+                                <i class="fas fa-hand-holding-usd"></i>
+                            </div>
+                            <h3 class="service-title">供应链金融</h3>
+                            <p class="service-desc">基于数字仓单的抵押借贷服务，快速获取流动资金，支持生产扩张</p>
+                            
+                            <ul class="service-features">
+                                <li><i class="fas fa-check-circle"></i> 数字仓单快速抵押</li>
+                                <li><i class="fas fa-check-circle"></i> 蚂蚁金服风控技术支持</li>
+                                <li><i class="fas fa-check-circle"></i> 实时利率，透明费用</li>
+                                <li><i class="fas fa-check-circle"></i> 最快24小时放款</li>
+                            </ul>
+                            
+                            <div style="margin-top: auto; width: 100%;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                                    <span>我的可贷额度</span>
+                                    <span class="metric-value" style="font-size: 24px;">¥850,000</span>
+                                </div>
+                                <button class="btn btn-primary" data-service="loan-application" style="width: 100%;">
+                                    <i class="fas fa-rocket"></i> 立即申请贷款
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- 交易平台 -->
+                        <div class="service-card fade-in">
+                            <div class="service-icon">
+                                <i class="fas fa-chart-bar"></i>
+                            </div>
+                            <h3 class="service-title">现货与期货交易</h3>
+                            <p class="service-desc">一站式咖啡豆现货与期货交易平台，支持套期保值与投资交易</p>
+                            
+                            <ul class="service-features">
+                                <li><i class="fas fa-check-circle"></i> 现货实时交易</li>
+                                <li><i class="fas fa-check-circle"></i> 期货合约定制</li>
+                                <li><i class="fas fa-check-circle"></i> 深度市场数据</li>
+                                <li><i class="fas fa-check-circle"></i> 安全资金托管</li>
+                            </ul>
+                            
+                            <button class="btn btn-primary" data-service="trading-platform">
+                                <i class="fas fa-exchange-alt"></i> 进入交易平台
+                            </button>
+                        </div>
+                        
+                        <!-- 保险服务 -->
+                        <div class="service-card fade-in">
+                            <div class="service-icon">
+                                <i class="fas fa-umbrella"></i>
+                            </div>
+                            <h3 class="service-title">全方位保险</h3>
+                            <p class="service-desc">为咖啡豆仓储、种植过程及价格波动提供全面风险保障</p>
+                            
+                            <ul class="service-features">
+                                <li><i class="fas fa-check-circle"></i> 仓储财产保险</li>
+                                <li><i class="fas fa-check-circle"></i> 雾培设备故障险</li>
+                                <li><i class="fas fa-check-circle"></i> 价格波动保险</li>
+                                <li><i class="fas fa-check-circle"></i> 自然灾害险</li>
+                            </ul>
+                            
+                            <button class="btn btn-primary" data-service="insurance">
+                                <i class="fas fa-shield-alt"></i> 定制保险方案
+                            </button>
+                        </div>
+                        
+                        <!-- 企业商城 -->
+                        <div class="service-card fade-in">
+                            <div class="service-icon">
+                                <i class="fas fa-store"></i>
+                            </div>
+                            <h3 class="service-title">托管式企业商城</h3>
+                            <p class="service-desc">免费为企业提供品牌店铺与电商功能，直接对接淘宝流量</p>
+                            
+                            <ul class="service-features">
+                                <li><i class="fas fa-check-circle"></i> 免费企业店铺搭建</li>
+                                <li><i class="fas fa-check-circle"></i> 淘宝/天猫流量导入</li>
+                                <li><i class="fas fa-check-circle"></i> 订单与物流管理</li>
+                                <li><i class="fas fa-check-circle"></i> 品牌营销工具</li>
+                            </ul>
+                            
+                            <button class="btn btn-primary" data-service="store">
+                                <i class="fas fa-store"></i> 创建我的店铺
+                            </button>
+                        </div>
+                        
+                        <!-- 数据服务 -->
+                        <div class="service-card fade-in">
+                            <div class="service-icon">
+                                <i class="fas fa-database"></i>
+                            </div>
+                            <h3 class="service-title">数据洞察服务</h3>
+                            <p class="service-desc">基于平台大数据的市场洞察与决策支持，助力业务增长</p>
+                            
+                            <ul class="service-features">
+                                <li><i class="fas fa-check-circle"></i> 市场趋势分析</li>
+                                <li><i class="fas fa-check-circle"></i> 价格预测模型</li>
+                                <li><i class="fas fa-check-circle"></i> 竞争对手分析</li>
+                                <li><i class="fas fa-check-circle"></i> 定制化数据报告</li>
+                            </ul>
+                            
+                            <button class="btn btn-primary" data-service="data-insights">
+                                <i class="fas fa-chart-pie"></i> 查看数据洞察
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 合作伙伴 -->
+            <section id="partners" class="page-section">
+                <div class="partners-section">
+                    <h2 class="section-title">合作伙伴</h2>
+                    <p class="section-subtitle">与行业领先企业合作，为咖啡产业提供最可靠的技术与金融服务</p>
+                    
+                    <div class="partners">
+                        <div class="partner-logo" data-partner="ant">
+                            <i class="fab fa-alipay" title="蚂蚁金服"></i>
+                        </div>
+                        <div class="partner-logo" data-partner="taobao">
+                            <i class="fab fa-taobao" title="淘宝网"></i>
+                        </div>
+                        <div class="partner-logo" data-partner="sf">
+                            <i class="fas fa-truck" title="顺丰速运"></i>
+                        </div>
+                        <div class="partner-logo" data-partner="pingan">
+                            <i class="fas fa-shield-alt" title="中国平安保险"></i>
+                        </div>
+                        <div class="partner-logo" data-partner="yunnan">
+                            <i class="fas fa-leaf" title="云南咖啡协会"></i>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 登录页面 -->
+            <section id="login" class="page-section">
+                <div class="login-section">
+                    <div class="login-container">
+                        <div class="login-header">
+                            <h2>登录 SHINAE Coffee Bank</h2>
+                            <p>请输入您的账户信息</p>
+                        </div>
+                        
+                        <form id="loginForm">
+                            <div class="form-group">
+                                <label for="username">用户名或邮箱</label>
+                                <input type="text" id="username" name="username" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="password">密码</label>
+                                <input type="password" id="password" name="password" required>
+                            </div>
+                            
+                            <div class="login-options">
+                                <div class="remember-me">
+                                    <input type="checkbox" id="remember" name="remember">
+                                    <label for="remember">记住我</label>
+                                </div>
+                                <a href="#" class="forgot-password">忘记密码？</a>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 20px;">
+                                登录
+                            </button>
+                            
+                            <div style="text-align: center; color: var(--x-text-secondary); font-size: 14px;">
+                                还没有账户？ <a href="#" id="signupLink" style="color: var(--x-accent); font-weight: 500;">立即注册</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 联系页面 -->
+            <section id="contact" class="page-section">
+                <div class="contact-section">
+                    <div class="contact-container">
+                        <div class="contact-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        
+                        <h2>联系我们</h2>
+                        <p>我们的团队随时准备为您提供帮助。请通过以下方式与我们联系：</p>
+                        
+                        <div class="contact-info">
+                            <div class="contact-method">
+                                <i class="fab fa-weixin"></i>
+                                <div>
+                                    <h3>微信</h3>
+                                    <p>请添加微信号：<strong>jebi_one</strong></p>
+                                </div>
+                            </div>
+                            
+                            <div class="contact-method">
+                                <i class="fas fa-envelope"></i>
+                                <div>
+                                    <h3>电子邮件</h3>
+                                    <p><strong>erik.wong@jebi.space</strong></p>
+                                </div>
+                            </div>
+                            
+                            <div class="contact-method">
+                                <i class="fas fa-phone"></i>
+                                <div>
+                                    <h3>电话</h3>
+                                    <p><strong>+8615800222338</strong></p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <p style="margin-top: 24px; color: var(--x-text-secondary); font-size: 14px;">
+                            我们会在24小时内回复您的咨询。感谢您对SHINAE Coffee Bank的关注！
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 服务详情页面 -->
+            <section id="service-detail" class="page-section">
+                <div class="service-detail-section">
+                    <div class="service-detail-container">
+                        <button class="back-button" id="backToServices">
+                            <i class="fas fa-arrow-left"></i> 返回服务列表
+                        </button>
+                        
+                        <div class="service-detail-header">
+                            <div class="service-detail-icon" id="serviceDetailIcon">
+                                <i class="fas fa-warehouse"></i>
+                            </div>
+                            <h2 id="serviceDetailTitle">智能云仓服务</h2>
+                            <p id="serviceDetailSubtitle">基于物联网与区块链技术的智能仓储解决方案</p>
+                        </div>
+                        
+                        <div id="serviceDetailContent">
+                            <!-- 内容将通过JavaScript动态加载 -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- 合作伙伴详情模态框 -->
+        <div class="partner-modal" id="partnerModal">
+            <div class="partner-modal-content">
+                <button class="partner-modal-close" id="closePartnerModal">
+                    <i class="fas fa-times"></i>
+                </button>
+                
+                <div id="partnerModalContent">
+                    <!-- 内容将通过JavaScript动态加载 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <i class="fas fa-coffee"></i>
+                        SHINAE Coffee Bank
+                    </div>
+                    <p style="color: var(--x-text-secondary); margin-bottom: 16px; font-size: 14px;">全球首个雾培咖啡数字金融与供应链服务平台，重新定义咖啡产业价值流通。</p>
+                    <div style="display: flex; gap: 12px;">
+                        <button class="btn btn-primary" id="footerFreeTrialBtn" style="padding: 8px 16px; font-size: 14px;">免费试用</button>
+                        <button class="btn btn-login" id="footerContactBtn" style="padding: 8px 16px; font-size: 14px;">联系销售</button>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4 style="margin-bottom: 16px; color: var(--x-text-primary); font-size: 16px;">产品服务</h4>
+                    <ul class="footer-links">
+                        <li><a data-page="services">智能云仓</a></li>
+                        <li><a data-page="services">供应链金融</a></li>
+                        <li><a data-page="services">交易平台</a></li>
+                        <li><a data-page="services">保险服务</a></li>
+                        <li><a data-page="services">企业商城</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4 style="margin-bottom: 16px; color: var(--x-text-primary); font-size: 16px;">资源与支持</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">帮助中心</a></li>
+                        <li><a href="#">API文档</a></li>
+                        <li><a href="#">市场数据</a></li>
+                        <li><a href="#">合规与安全</a></li>
+                        <li><a href="#">服务状态</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4 style="margin-bottom: 16px; color: var(--x-text-primary); font-size: 16px;">联系我们</h4>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-phone" style="margin-right: 8px; font-size: 12px;"></i> +8615800222338 (微信)</li>
+                        <li><i class="fas fa-envelope" style="margin-right: 8px; font-size: 12px;"></i> erik.wong@jebi.space</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2025 SHINAE Coffee Bank 雾培咖啡金融平台. 保留所有权利. </p>
+                <p style="margin-top: 8px; font-size: 12px;">本平台受相关金融监管机构监督，投资有风险，入市需谨慎</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // 单页应用状态管理
+        const AppState = {
+            currentPage: 'home',
+            previousPage: null,
+            serviceData: {
+                'cloud-storage': {
+                    title: '智能云仓服务',
+                    icon: 'fas fa-warehouse',
+                    subtitle: '基于物联网与区块链技术的智能仓储解决方案',
+                    content: `
+                        <h3 style="margin-bottom: 16px; font-size: 20px;">服务概述</h3>
+                        <p style="margin-bottom: 24px; color: var(--x-text-secondary); line-height: 1.6;">智能云仓服务为咖啡种植户和贸易商提供安全、透明、高效的仓储解决方案。我们利用物联网(IoT)和区块链技术，确保您的咖啡豆在整个存储过程中得到最佳保护。</p>
+                        
+                        <h3 style="margin-bottom: 16px; font-size: 20px;">主要功能</h3>
+                        <ul style="margin-bottom: 24px; padding-left: 20px; color: var(--x-text-secondary);">
+                            <li style="margin-bottom: 8px;"><strong>实时监控</strong>: 24/7温湿度监控，确保咖啡豆品质</li>
+                            <li style="margin-bottom: 8px;"><strong>区块链存证</strong>: 所有入库、出库记录上链，不可篡改</li>
+                            <li style="margin-bottom: 8px;"><strong>智能预警</strong>: 异常情况自动报警，及时处理</li>
+                            <li style="margin-bottom: 8px;"><strong>全球网络</strong>: 覆盖主要产区和消费市场的仓储网络</li>
+                        </ul>
+                        
+                        <h3 style="margin-bottom: 16px; font-size: 20px;">价格方案</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 16px; margin-bottom: 24px;">
+                            <div style="background-color: rgba(255,255,255,0.05); padding: 16px; border-radius: 12px; border: 1px solid var(--x-border);">
+                                <h4 style="margin-bottom: 8px;">基础方案</h4>
+                                <p style="color: var(--x-accent); font-weight: 700; margin-bottom: 8px;">¥0.5/公斤/月</p>
+                                <p style="color: var(--x-text-secondary); font-size: 14px;">适合小规模存储需求</p>
+                            </div>
+                            <div style="background-color: rgba(255,255,255,0.05); padding: 16px; border-radius: 12px; border: 1px solid var(--x-border);">
+                                <h4 style="margin-bottom: 8px;">专业方案</h4>
+                                <p style="color: var(--x-accent); font-weight: 700; margin-bottom: 8px;">¥0.4/公斤/月</p>
+                                <p style="color: var(--x-text-secondary); font-size: 14px;">适合中等规模存储需求</p>
+                            </div>
+                            <div style="background-color: rgba(255,255,255,0.05); padding: 16px; border-radius: 12px; border: 1px solid var(--x-border);">
+                                <h4 style="margin-bottom: 8px;">企业方案</h4>
+                                <p style="color: var(--x-accent); font-weight: 700; margin-bottom: 8px;">¥0.3/公斤/月</p>
+                                <p style="color: var(--x-text-secondary); font-size: 14px;">适合大规模存储需求</p>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-primary" style="width: 100%;">
+                            <i class="fas fa-play-circle"></i> 立即体验智能云仓
+                        </button>
+                    `
+                },
+                'loan-application': {
+                    title: '供应链金融服务',
+                    icon: 'fas fa-hand-holding-usd',
+                    subtitle: '基于数字仓单的快速融资解决方案',
+                    content: `
+                        <h3 style="margin-bottom: 16px; font-size: 20px;">贷款申请流程</h3>
+                        <p style="margin-bottom: 24px; color: var(--x-text-secondary); line-height: 1.6;">通过我们的平台，您可以使用数字仓单作为抵押，快速获得流动资金支持。</p>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-top: 16px; margin-bottom: 24px;">
+                            <div style="text-align: center;">
+                                <div style="width: 50px; height: 50px; background-color: var(--x-accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
+                                    <span style="color: white; font-weight: bold;">1</span>
+                                </div>
+                                <h4 style="margin-bottom: 4px; font-size: 16px;">提交申请</h4>
+                                <p style="color: var(--x-text-secondary); font-size: 13px;">在线填写贷款申请信息</p>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="width: 50px; height: 50px; background-color: var(--x-accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
+                                    <span style="color: white; font-weight: bold;">2</span>
+                                </div>
+                                <h4 style="margin-bottom: 4px; font-size: 16px;">仓单验证</h4>
+                                <p style="color: var(--x-text-secondary); font-size: 13px;">系统自动验证数字仓单</p>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="width: 50px; height: 50px; background-color: var(--x-accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
+                                    <span style="color: white; font-weight: bold;">3</span>
+                                </div>
+                                <h4 style="margin-bottom: 4px; font-size: 16px;">风控审核</h4>
+                                <p style="color: var(--x-text-secondary); font-size: 13px;">蚂蚁金服风控系统审核</p>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="width: 50px; height: 50px; background-color: var(--x-accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
+                                    <span style="color: white; font-weight: bold;">4</span>
+                                </div>
+                                <h4 style="margin-bottom: 4px; font-size: 16px;">快速放款</h4>
+                                <p style="color: var(--x-text-secondary); font-size: 13px;">最快24小时内资金到账</p>
+                            </div>
+                        </div>
+                        
+                        <h3 style="margin-bottom: 16px; font-size: 20px;">贷款计算器</h3>
+                        <div style="background-color: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; margin-top: 16px; margin-bottom: 24px; border: 1px solid var(--x-border);">
+                            <div style="display: flex; gap: 16px; margin-bottom: 16px;">
+                                <div style="flex: 1;">
+                                    <label style="display: block; margin-bottom: 8px; color: var(--x-text-secondary);">贷款金额 (¥)</label>
+                                    <input type="range" min="10000" max="1000000" value="100000" style="width: 100%;">
+                                    <div style="text-align: center; margin-top: 8px; color: var(--x-text-primary); font-weight: 500;">¥100,000</div>
+                                </div>
+                                <div style="flex: 1;">
+                                    <label style="display: block; margin-bottom: 8px; color: var(--x-text-secondary);">贷款期限 (月)</label>
+                                    <input type="range" min="1" max="12" value="6" style="width: 100%;">
+                                    <div style="text-align: center; margin-top: 8px; color: var(--x-text-primary); font-weight: 500;">6个月</div>
+                                </div>
+                            </div>
+                            <div style="text-align: center; padding: 16px; background-color: rgba(0, 186, 124, 0.1); border-radius: 12px; border: 1px solid var(--x-success);">
+                                <h4 style="margin-bottom: 8px; color: var(--x-text-primary);">预计月还款</h4>
+                                <p style="font-size: 32px; font-weight: 900; color: var(--x-text-primary); margin-bottom: 4px;">¥17,500</p>
+                                <p style="color: var(--x-text-secondary); font-size: 14px;">年利率: 7.5%</p>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-primary" style="width: 100%;">
+                            <i class="fas fa-file-signature"></i> 立即申请贷款
+                        </button>
+                    `
+                },
+                'trading-platform': {
+                    title: '现货与期货交易平台',
+                    icon: 'fas fa-chart-bar',
+                    subtitle: '一站式咖啡豆交易与投资平台',
+                    content: `
+                        <h3 style="margin-bottom: 16px; font-size: 20px;">交易平台功能</h3>
+                        <p style="margin-bottom: 24px; color: var(--x-text-secondary); line-height: 1.6;">我们的交易平台支持咖啡豆现货和期货交易，为种植户、贸易商和投资者提供全面的交易工具。</p>
+                        
+                        <h3 style="margin-bottom: 16px; font-size: 20px;">交易品种</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 16px; margin-bottom: 24px;">
+                            <div style="background-color: rgba(255,255,255,0.05); padding: 16px; border-radius: 12px; border: 1px solid var(--x-border);">
+                                <h4 style="margin-bottom: 8px;">Arabica期货</h4>
+                                <p style="color: var(--x-text-secondary); font-size: 14px; margin-bottom: 8px;">交易代码: ARA</p>
+                                <p class="positive" style="font-weight: 700;">¥185.50 (+1.2%)</p>
+                            </div>
+                            <div style="background-color: rgba(255,255,255,0.05); padding: 16px; border-radius: 12px; border: 1px solid var(--x-border);">
+                                <h4 style="margin-bottom: 8px;">云南雾培豆</h4>
+                                <p style="color: var(--x-text-secondary); font-size: 14px; margin-bottom: 8px;">交易代码: YNF</p>
+                                <p class="positive" style="font-weight: 700;">¥210.30 (+2.8%)</p>
+                            </div>
+                            <div style="background-color: rgba(255,255,255,0.05); padding: 16px; border-radius: 12px; border: 1px solid var(--x-border);">
+                                <h4 style="margin-bottom: 8px;">巴西传统豆</h4>
+                                <p style="color: var(--x-text-secondary); font-size: 14px; margin-bottom: 8px;">交易代码: BRA</p>
+                                <p class="negative" style="font-weight: 700;">¥165.80 (-0.5%)</p>
+                            </div>
+                        </div>
+                        
+                        <h3 style="margin-bottom: 16px; font-size: 20px;">模拟交易</h3>
+                        <p style="margin-bottom: 16px; color: var(--x-text-secondary);">新手可以先使用模拟交易功能熟悉平台操作：</p>
+                        
+                        <div style="background-color: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; margin-top: 16px; margin-bottom: 24px; border: 1px solid var(--x-border);">
+                            <div style="display: flex; gap: 16px; margin-bottom: 16px;">
+                                <div style="flex: 1;">
+                                    <label style="display: block; margin-bottom: 8px; color: var(--x-text-secondary);">交易品种</label>
+                                    <select style="width: 100%; padding: 12px; border-radius: 8px; background-color: transparent; border: 1px solid var(--x-border); color: var(--x-text-primary); font-family: var(--x-font);">
+                                        <option value="ARA">Arabica期货 (ARA)</option>
+                                        <option value="YNF">云南雾培豆 (YNF)</option>
+                                        <option value="BRA">巴西传统豆 (BRA)</option>
+                                    </select>
+                                </div>
+                                <div style="flex: 1;">
+                                    <label style="display: block; margin-bottom: 8px; color: var(--x-text-secondary);">交易方向</label>
+                                    <div style="display: flex; gap: 8px;">
+                                        <button class="btn" style="flex: 1; background-color: var(--x-success); color: white; padding: 12px; font-size: 14px;">买入</button>
+                                        <button class="btn" style="flex: 1; background-color: transparent; border: 1px solid var(--x-border); padding: 12px; font-size: 14px;">卖出</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: 16px;">
+                                <label style="display: block; margin-bottom: 8px; color: var(--x-text-secondary);">数量 (吨)</label>
+                                <input type="number" value="1" min="0.1" step="0.1" style="width: 100%; padding: 12px; border-radius: 8px; background-color: transparent; border: 1px solid var(--x-border); color: var(--x-text-primary);">
+                            </div>
+                            
+                            <button class="btn btn-primary" style="width: 100%;">
+                                <i class="fas fa-bolt"></i> 模拟交易
+                            </button>
+                        </div>
+                        
+                        <button class="btn btn-primary" style="width: 100%;">
+                            <i class="fas fa-exchange-alt"></i> 进入真实交易平台
+                        </button>
+                    `
+                },
+                'insurance': {
+                    title: '全方位保险服务',
+                    icon: 'fas fa-umbrella',
+                    subtitle: '为咖啡产业提供全面的风险保障',
+                    content: `
+                        <h3 style="margin-bottom: 16px; font-size: 20px;">保险产品</h3>
+                        <p style="margin-bottom: 24px; color: var(--x-text-secondary); line-height: 1.6;">我们为咖啡产业的各个环节提供定制化的保险解决方案，帮助您规避各种风险。</p>
+                        
+                        <h3 style="margin-bottom: 16px; font-size: 20px;">主要保险产品</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 16px; margin-bottom: 24px;">
+                            <div style="background-color: rgba(255,255,255,0.05); padding: 16px; border-radius: 12px; border: 1px solid var(--x-border);">
+                                <h4 style="margin-bottom: 8px;">仓储财产保险</h4>
+                                <p style="color: var(--x-text-secondary); font-size: 14px; margin-bottom: 8px;">保障咖啡豆在仓储期间的火灾、盗窃等风险</p>
+                                <p style="color: var(--x-accent); font-weight: 700; margin-bottom: 8px;">¥0.2/公斤/年</p>
+                            </div>
+                            <div style="background-color: rgba(255,255,255,0.05); padding: 16px; border-radius: 12px; border: 1px solid var(--x-border);">
+                                <h4 style="margin-bottom: 8px;">雾培设备故障险</h4>
+                                <p style="color: var(--x-text-secondary); font-size: 14px; margin-bottom: 8px;">保障雾化水培设备的意外损坏</p>
+                                <p style="color: var(--x-accent); font-weight: 700; margin-bottom: 8px;">设备价值的2%/年</p>
+                            </div>
+                            <div style="background-color: rgba(255,255,255,0.05); padding: 16px; border-radius: 12px; border: 1px solid var(--x-border);">
+                                <h4 style="margin-bottom: 8px;">价格波动保险</h4>
+                                <p style="color: var(--x-text-secondary); font-size: 14px; margin-bottom: 8px;">保障咖啡豆价格大幅下跌的风险</p>
+                                <p style="color: var(--x-accent); font-weight: 700; margin-bottom: 8px;">¥0.5/公斤/年</p>
+                            </div>
+                        </div>
+                        
+                        <h3 style="margin-bottom: 16px; font-size: 20px;">保险方案定制</h3>
+                        <p style="margin-bottom: 16px; color: var(--x-text-secondary);">请填写以下信息，我们将为您定制专属保险方案：</p>
+                        
+                        <div style="background-color: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; margin-top: 16px; margin-bottom: 24px; border: 1px solid var(--x-border);">
+                            <div style="display: flex; gap: 16px; margin-bottom: 16px;">
+                                <div style="flex: 1;">
+                                    <label style="display: block; margin-bottom: 8px; color: var(--x-text-secondary);">咖啡豆类型</label>
+                                    <select style="width: 100%; padding: 12px; border-radius: 8px; background-color: transparent; border: 1px solid var(--x-border); color: var(--x-text-primary); font-family: var(--x-font);">
+                                        <option value="arabica">Arabica</option>
+                                        <option value="robusta">Robusta</option>
+                                        <option value="yunnan">云南雾培豆</option>
+                                    </select>
+                                </div>
+                                <div style="flex: 1;">
+                                    <label style="display: block; margin-bottom: 8px; color: var(--x-text-secondary);">存储数量 (吨)</label>
+                                    <input type="number" value="5" min="0.1" step="0.1" style="width: 100%; padding: 12px; border-radius: 8px; background-color: transparent; border: 1px solid var(--x-border); color: var(--x-text-primary);">
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: 16px;">
+                                <label style="display: block; margin-bottom: 8px; color: var(--x-text-secondary);">需要保障的风险类型</label>
+                                <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+                                    <label style="display: flex; align-items: center; gap: 8px; color: var(--x-text-primary); font-size: 14px;">
+                                        <input type="checkbox" checked style="accent-color: var(--x-accent);">
+                                        <span>仓储财产风险</span>
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 8px; color: var(--x-text-primary); font-size: 14px;">
+                                        <input type="checkbox" style="accent-color: var(--x-accent);">
+                                        <span>设备故障风险</span>
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 8px; color: var(--x-text-primary); font-size: 14px;">
+                                        <input type="checkbox" checked style="accent-color: var(--x-accent);">
+                                        <span>价格波动风险</span>
+                                    </label>
+                                    <label style="display: flex; align-items: center; gap: 8px; color: var(--x-text-primary); font-size: 14px;">
+                                        <input type="checkbox" style="accent-color: var(--x-accent);">
+                                        <span>自然灾害风险</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <button class="btn btn-primary" style="width: 100%;">
+                                <i class="fas fa-calculator"></i> 计算保费
+                            </button>
+                        </div>
+                        
+                        <div style="text-align: center; padding: 16px; background-color: rgba(0, 186, 124, 0.1); border-radius: 12px; margin-bottom: 24px; border: 1px solid var(--x-success);">
+                            <h4 style="margin-bottom: 8px; color: var(--x-text-primary);">预估年度保费</h4>
+                            <p style="font-size: 32px; font-weight: 900; color: var(--x-text-primary); margin-bottom: 4px;">¥2,500</p>
+                            <p style="color: var(--x-text-secondary); font-size: 14px;">基于5吨Arabica咖啡豆，保障仓储财产和价格波动风险</p>
+                        </div>
+                        
+                        <button class="btn btn-primary" style="width: 100%;">
+                            <i class="fas fa-file-contract"></i> 立即购买保险
+                        </button>
+                    `
+                },
+                'store': {
+                    title: '托管式企业商城',
+                    icon: 'fas fa-store',
+                    subtitle: '免费为企业提供品牌电商解决方案',
+                    content: `
+                        <h3 style="margin-bottom: 16px; font-size: 20px;">企业商城服务</h3>
+                        <p style="margin-bottom: 24px; color: var(--x-text-secondary); line-height: 1.6;">我们为咖啡种植户和加工企业提供免费的电商店铺搭建服务，帮助您直接触达终端消费者。</p>
+                        
+                        <h3 style="margin-bottom: 16px; font-size: 20px;">主要功能</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 16px; margin-bottom: 24px;">
+                            <div style="background-color: rgba(255,255,255,0.05); padding: 16px; border-radius: 12px; border: 1px solid var(--x-border);">
+                                <h4 style="margin-bottom: 8px;">免费店铺搭建</h4>
+                                <p style="color: var(--x-text-secondary); font-size: 14px;">专业设计的店铺模板，一键生成</p>
+                            </div>
+                            <div style="background-color: rgba(255,255,255,0.05); padding: 16px; border-radius: 12px; border: 1px solid var(--x-border);">
+                                <h4 style="margin-bottom: 8px;">淘宝流量导入</h4>
+                                <p style="color: var(--x-text-secondary); font-size: 14px;">直接对接淘宝/天猫流量入口</p>
+                            </div>
+                            <div style="background-color: rgba(255,255,255,0.05); padding: 16px; border-radius: 12px; border: 1px solid var(--x-border);">
+                                <h4 style="margin-bottom: 8px;">订单与物流管理</h4>
+                                <p style="color: var(--x-text-secondary); font-size: 14px;">一站式订单处理和物流跟踪</p>
+                            </div>
+                        </div>
+                        
+                        <h3 style="margin-bottom: 16px; font-size: 20px;">店铺创建向导</h3>
+                        <p style="margin-bottom: 16px; color: var(--x-text-secondary);">只需三步，即可创建您的专属店铺：</p>
+                        
+                        <div style="background-color: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; margin-top: 16px; margin-bottom: 24px; border: 1px solid var(--x-border);">
+                            <div style="margin-bottom: 24px;">
+                                <h4 style="margin-bottom: 12px; color: var(--x-text-primary); font-size: 16px;">步骤1: 基本信息</h4>
+                                <div style="display: flex; gap: 16px; margin-top: 12px;">
+                                    <div style="flex: 1;">
+                                        <label style="display: block; margin-bottom: 8px; color: var(--x-text-secondary);">企业名称</label>
+                                        <input type="text" placeholder="例如: 云南精品咖啡合作社" style="width: 100%; padding: 12px; border-radius: 8px; background-color: transparent; border: 1px solid var(--x-border); color: var(--x-text-primary);">
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <label style="display: block; margin-bottom: 8px; color: var(--x-text-secondary);">主营产品</label>
+                                        <input type="text" placeholder="例如: 雾培Arabica咖啡豆" style="width: 100%; padding: 12px; border-radius: 8px; background-color: transparent; border: 1px solid var(--x-border); color: var(--x-text-primary);">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-bottom: 24px;">
+                                <h4 style="margin-bottom: 12px; color: var(--x-text-primary); font-size: 16px;">步骤2: 店铺风格</h4>
+                                <div style="display: flex; gap: 12px; margin-top: 12px;">
+                                    <div style="flex: 1; text-align: center; cursor: pointer; padding: 16px; border-radius: 12px; border: 2px solid var(--x-border); transition: var(--x-transition);">
+                                        <i class="fas fa-mountain" style="font-size: 24px; margin-bottom: 8px; color: var(--x-text-primary);"></i>
+                                        <p style="color: var(--x-text-primary); font-size: 14px;">自然风格</p>
+                                    </div>
+                                    <div style="flex: 1; text-align: center; cursor: pointer; padding: 16px; border-radius: 12px; border: 2px solid var(--x-accent); transition: var(--x-transition); background-color: rgba(29, 155, 240, 0.1);">
+                                        <i class="fas fa-industry" style="font-size: 24px; margin-bottom: 8px; color: var(--x-accent);"></i>
+                                        <p style="color: var(--x-accent); font-size: 14px;">工业风格</p>
+                                    </div>
+                                    <div style="flex: 1; text-align: center; cursor: pointer; padding: 16px; border-radius: 12px; border: 2px solid var(--x-border); transition: var(--x-transition);">
+                                        <i class="fas fa-leaf" style="font-size: 24px; margin-bottom: 8px; color: var(--x-text-primary);"></i>
+                                        <p style="color: var(--x-text-primary); font-size: 14px;">生态风格</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h4 style="margin-bottom: 12px; color: var(--x-text-primary); font-size: 16px;">步骤3: 联系方式</h4>
+                                <div style="margin-top: 12px;">
+                                    <label style="display: block; margin-bottom: 8px; color: var(--x-text-secondary);">联系电话</label>
+                                    <input type="text" placeholder="例如: +86 13800138000" style="width: 100%; padding: 12px; border-radius: 8px; background-color: transparent; border: 1px solid var(--x-border); color: var(--x-text-primary);">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-primary" style="width: 100%;">
+                            <i class="fas fa-store"></i> 立即创建我的店铺
+                        </button>
+                    `
+                },
+                'data-insights': {
+                    title: '数据洞察服务',
+                    icon: 'fas fa-database',
+                    subtitle: '基于大数据的市场分析与决策支持',
+                    content: `
+                        <h3 style="margin-bottom: 16px; font-size: 20px;">数据服务概述</h3>
+                        <p style="margin-bottom: 24px; color: var(--x-text-secondary); line-height: 1.6;">我们利用平台积累的海量数据，为咖啡产业从业者提供深入的市场洞察和决策支持。</p>
+                        
+                        <h3 style="margin-bottom: 16px; font-size: 20px;">数据产品</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 16px; margin-bottom: 24px;">
+                            <div style="background-color: rgba(255,255,255,0.05); padding: 16px; border-radius: 12px; border: 1px solid var(--x-border);">
+                                <h4 style="margin-bottom: 8px;">市场趋势报告</h4>
+                                <p style="color: var(--x-text-secondary); font-size: 14px; margin-bottom: 8px;">月度/季度市场趋势分析报告</p>
+                                <p style="color: var(--x-accent); font-weight: 700; margin-bottom: 8px;">¥999/月</p>
+                            </div>
+                            <div style="background-color: rgba(255,255,255,0.05); padding: 16px; border-radius: 12px; border: 1px solid var(--x-border);">
+                                <h4 style="margin-bottom: 8px;">价格预测模型</h4>
+                                <p style="color: var(--x-text-secondary); font-size: 14px; margin-bottom: 8px;">基于AI的价格预测与预警</p>
+                                <p style="color: var(--x-accent); font-weight: 700; margin-bottom: 8px;">¥2,499/月</p>
+                            </div>
+                            <div style="background-color: rgba(255,255,255,0.05); padding: 16px; border-radius: 12px; border: 1px solid var(--x-border);">
+                                <h4 style="margin-bottom: 8px;">竞争对手分析</h4>
+                                <p style="color: var(--x-text-secondary); font-size: 14px; margin-bottom: 8px;">深度竞争对手分析报告</p>
+                                <p style="color: var(--x-accent); font-weight: 700; margin-bottom: 8px;">¥1,499/次</p>
+                            </div>
+                        </div>
+                        
+                        <h3 style="margin-bottom: 16px; font-size: 20px;">数据洞察演示</h3>
+                        <p style="margin-bottom: 16px; color: var(--x-text-secondary);">以下是我们数据洞察服务的示例：</p>
+                        
+                        <div style="background-color: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; margin-top: 16px; margin-bottom: 24px; border: 1px solid var(--x-border);">
+                            <h4 style="margin-bottom: 12px; color: var(--x-text-primary);">咖啡豆价格趋势预测</h4>
+                            <div style="height: 200px; background-color: rgba(0,0,0,0.3); border-radius: 8px; display: flex; align-items: flex-end; padding: 16px; margin-top: 16px;">
+                                <div style="display: flex; width: 100%; height: 80%; justify-content: space-around; align-items: flex-end;">
+                                    <div style="width: 10%; background-color: var(--x-accent); height: 60%; border-radius: 4px 4px 0 0;"></div>
+                                    <div style="width: 10%; background-color: var(--x-accent); height: 75%; border-radius: 4px 4px 0 0;"></div>
+                                    <div style="width: 10%; background-color: var(--x-accent); height: 85%; border-radius: 4px 4px 0 0;"></div>
+                                    <div style="width: 10%; background-color: var(--x-accent); height: 90%; border-radius: 4px 4px 0 0;"></div>
+                                    <div style="width: 10%; background-color: var(--x-accent); height: 95%; border-radius: 4px 4px 0 0;"></div>
+                                    <div style="width: 10%; background-color: var(--x-success); height: 92%; border-radius: 4px 4px 0 0;"></div>
+                                    <div style="width: 10%; background-color: var(--x-success); height: 88%; border-radius: 4px 4px 0 0;"></div>
+                                    <div style="width: 10%; background-color: var(--x-success); height: 85%; border-radius: 4px 4px 0 0;"></div>
+                                    <div style="width: 10%; background-color: var(--x-success); height: 82%; border-radius: 4px 4px 0 0;"></div>
+                                    <div style="width: 10%; background-color: var(--x-success); height: 80%; border-radius: 4px 4px 0 0;"></div>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-top: 12px; font-size: 13px; color: var(--x-text-secondary);">
+                                <span>历史数据</span>
+                                <span>预测数据</span>
+                            </div>
+                            
+                            <div style="margin-top: 20px;">
+                                <h4 style="margin-bottom: 12px; color: var(--x-text-primary);">关键洞察</h4>
+                                <ul style="padding-left: 20px; color: var(--x-text-secondary);">
+                                    <li style="margin-bottom: 8px;">预计未来3个月Arabica价格将上涨5-8%</li>
+                                    <li style="margin-bottom: 8px;">云南雾培豆市场需求持续增长，预计增长12%</li>
+                                    <li>巴西传统豆供应稳定，价格波动较小</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-primary" style="width: 100%;">
+                            <i class="fas fa-chart-line"></i> 订阅数据洞察服务
+                        </button>
+                    `
+                }
+            },
+            partnerData: {
+                'ant': {
+                    name: '蚂蚁金服',
+                    logo: 'fab fa-alipay',
+                    description: '蚂蚁金服是全球领先的金融科技公司，为我们平台提供支付、征信和风控技术支持。通过蚂蚁金服的先进技术，我们能够为咖啡种植户提供快速、安全的金融服务。',
+                    collaboration: '合作领域：支付结算、信用风控、小额贷款技术支持'
+                },
+                'taobao': {
+                    name: '淘宝网',
+                    logo: 'fab fa-taobao',
+                    description: '淘宝网是中国最大的电商平台，与我们平台深度整合，为咖啡种植户和企业提供直接面向消费者的销售渠道。通过淘宝的流量支持，我们的用户可以轻松触达数亿消费者。',
+                    collaboration: '合作领域：电商渠道、流量支持、店铺整合'
+                },
+                'sf': {
+                    name: '顺丰速运',
+                    logo: 'fas fa-truck',
+                    description: '顺丰速运是中国领先的物流服务提供商，为我们平台的仓储和配送环节提供专业支持。通过顺丰的物流网络，我们能够确保咖啡豆安全、高效地送达全球各地。',
+                    collaboration: '合作领域：仓储物流、冷链运输、全球配送'
+                },
+                'pingan': {
+                    name: '中国平安保险',
+                    logo: 'fas fa-shield-alt',
+                    description: '中国平安是中国最大的保险集团之一，为我们平台提供定制化的保险产品。通过平安的专业保险服务，我们能够为咖啡产业的各个环节提供全面的风险保障。',
+                    collaboration: '合作领域：财产保险、价格保险、种植保险'
+                },
+                'yunnan': {
+                    name: '云南咖啡协会',
+                    logo: 'fas fa-leaf',
+                    description: '云南咖啡协会是云南省咖啡产业的权威组织，与我们平台合作推广云南精品咖啡。通过协会的专业指导，我们能够确保平台上的云南咖啡豆品质优良、来源可靠。',
+                    collaboration: '合作领域：品质认证、产区推广、技术培训'
+                }
+            }
+        };
+
+        // 单页应用导航函数
+        function navigateTo(page) {
+            // 更新导航状态
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('data-page') === page) {
+                    link.classList.add('active');
+                }
+            });
+            
+            // 更新页面内容
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            const targetSection = document.getElementById(page);
+            if (targetSection) {
+                targetSection.classList.add('active');
+                AppState.currentPage = page;
+                
+                // 如果是首页，更新统计数据动画
+                if (page === 'home') {
+                    setTimeout(() => {
+                        animateCounter('stat1', 1350);
+                        animateCounter('stat2', 8920);
+                    }, 500);
+                }
+                
+                // 如果是驾驶舱页面，初始化图表
+                if (page === 'dashboard') {
+                    setTimeout(initializeCharts, 300);
+                }
+            }
+            
+            // 滚动到顶部
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 初始化函数
+        function initApp() {
+            // 更新时间显示
+            function updateTime() {
+                const now = new Date();
+                const timeString = now.getHours().toString().padStart(2, '0') + ':' + 
+                                  now.getMinutes().toString().padStart(2, '0') + ':' + 
+                                  now.getSeconds().toString().padStart(2, '0');
+                const timeElement = document.getElementById('currentTime');
+                if (timeElement) {
+                    timeElement.textContent = timeString;
+                }
+            }
+            
+            updateTime();
+            setInterval(updateTime, 1000);
+            
+            // 导航链接点击事件
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = this.getAttribute('data-page');
+                    navigateTo(page);
+                    
+                    // 移动端点击后关闭菜单
+                    if (window.innerWidth <= 992) {
+                        document.getElementById('navLinks').style.display = 'none';
+                    }
+                });
+            });
+            
+            // 首页链接
+            document.getElementById('homeLink').addEventListener('click', function(e) {
+                e.preventDefault();
+                navigateTo('home');
+            });
+            
+            // 登录按钮
+            document.getElementById('loginBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                navigateTo('login');
+            });
+            
+            // 联系销售按钮
+            document.getElementById('contactBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                navigateTo('contact');
+            });
+            
+            // 免费试用按钮
+            document.getElementById('freeTrialBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                navigateTo('contact');
+            });
+            
+            // 查看演示按钮
+            document.getElementById('demoBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                navigateTo('dashboard');
+            });
+            
+            // 页脚免费试用按钮
+            document.getElementById('footerFreeTrialBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                navigateTo('contact');
+            });
+            
+            // 页脚联系销售按钮
+            document.getElementById('footerContactBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                navigateTo('contact');
+            });
+            
+            // 服务按钮点击事件
+            document.querySelectorAll('[data-service]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const serviceId = this.getAttribute('data-service');
+                    if (AppState.serviceData[serviceId]) {
+                        // 保存当前页面以便返回
+                        AppState.previousPage = AppState.currentPage;
+                        
+                        // 更新服务详情页面内容
+                        const service = AppState.serviceData[serviceId];
+                        document.getElementById('serviceDetailIcon').innerHTML = `<i class="${service.icon}"></i>`;
+                        document.getElementById('serviceDetailTitle').textContent = service.title;
+                        document.getElementById('serviceDetailSubtitle').textContent = service.subtitle;
+                        document.getElementById('serviceDetailContent').innerHTML = service.content;
+                        
+                        // 导航到服务详情页面
+                        navigateTo('service-detail');
+                    }
+                });
+            });
+            
+            // 返回服务列表按钮
+            document.getElementById('backToServices').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (AppState.previousPage) {
+                    navigateTo(AppState.previousPage);
+                } else {
+                    navigateTo('services');
+                }
+            });
+            
+            // 合作伙伴logo点击事件
+            document.querySelectorAll('.partner-logo').forEach(logo => {
+                logo.addEventListener('click', function() {
+                    const partnerId = this.getAttribute('data-partner');
+                    if (AppState.partnerData[partnerId]) {
+                        const partner = AppState.partnerData[partnerId];
+                        
+                        const modalContent = `
+                            <div class="partner-detail">
+                                <div style="text-align: center; margin-bottom: 20px;">
+                                    <i class="${partner.logo}" style="font-size: 48px; color: var(--x-accent);"></i>
+                                    <h2 style="margin-top: 12px; margin-bottom: 8px;">${partner.name}</h2>
+                                </div>
+                                
+                                <div style="margin-bottom: 20px;">
+                                    <h3 style="margin-bottom: 12px; color: var(--x-text-primary);">合作伙伴介绍</h3>
+                                    <p style="color: var(--x-text-secondary); line-height: 1.6;">${partner.description}</p>
+                                </div>
+                                
+                                <div style="background-color: rgba(255,255,255,0.05); padding: 16px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--x-border);">
+                                    <h4 style="margin-bottom: 8px; color: var(--x-text-primary);">合作领域</h4>
+                                    <p style="color: var(--x-text-secondary);">${partner.collaboration}</p>
+                                </div>
+                                
+                                <div style="text-align: center;">
+                                    <button class="btn btn-primary" style="width: 100%;">
+                                        <i class="fas fa-handshake"></i> 查看合作详情
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        
+                        document.getElementById('partnerModalContent').innerHTML = modalContent;
+                        document.getElementById('partnerModal').classList.add('active');
+                    }
+                });
+            });
+            
+            // 关闭合作伙伴模态框
+            document.getElementById('closePartnerModal').addEventListener('click', function() {
+                document.getElementById('partnerModal').classList.remove('active');
+            });
+            
+            // 点击模态框外部关闭
+            document.getElementById('partnerModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+            
+            // 移动端菜单切换
+            document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+                const navLinks = document.getElementById('navLinks');
+                if (navLinks.style.display === 'flex') {
+                    navLinks.style.display = 'none';
+                } else {
+                    navLinks.style.display = 'flex';
+                    navLinks.style.flexDirection = 'column';
+                    navLinks.style.position = 'absolute';
+                    navLinks.style.top = '100%';
+                    navLinks.style.left = '0';
+                    navLinks.style.width = '100%';
+                    navLinks.style.backgroundColor = 'var(--x-bg)';
+                    navLinks.style.padding = '16px 0';
+                    navLinks.style.borderBottom = '1px solid var(--x-border)';
+                    navLinks.style.boxShadow = '0 10px 20px rgba(0,0,0,0.3)';
+                }
+            });
+            
+            // 数据标签点击事件
+            document.querySelectorAll('.data-tag').forEach(tag => {
+                tag.addEventListener('click', function() {
+                    const info = this.getAttribute('data-info');
+                    alert(`${this.textContent}: ${info}`);
+                });
+            });
+            
+            // 刷新按钮点击事件
+            const refreshBtn = document.getElementById('refreshBtn');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', function() {
+                    this.style.transform = 'rotate(360deg)';
+                    setTimeout(() => {
+                        this.style.transform = 'rotate(0deg)';
+                    }, 500);
+                    
+                    console.log('数据刷新中...');
+                });
+            }
+            
+            // 登录表单提交
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    alert('登录功能演示中，实际功能需要后端支持');
+                    navigateTo('home');
+                });
+            }
+            
+            // 初始化图表
+            initializeCharts();
+        }
+
+        // 统计数字动画
+        function animateCounter(elementId, targetValue, duration = 2000) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            const startValue = 0;
+            const increment = targetValue / (duration / 16);
+            let currentValue = startValue;
+            
+            const timer = setInterval(() => {
+                currentValue += increment;
+                if (currentValue >= targetValue) {
+                    element.textContent = targetValue.toLocaleString();
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(currentValue).toLocaleString();
+                }
+            }, 16);
+        }
+
+        // 初始化图表函数
+        function initializeCharts() {
+            // 市场总览图表
+            const marketCtx = document.getElementById('marketChart');
+            if (marketCtx) {
+                const marketChart = new Chart(marketCtx.getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+                        datasets: [
+                            {
+                                label: 'Arabica期货',
+                                data: [165, 168, 172, 175, 178, 182, 185, 183, 180, 178, 182, 185],
+                                borderColor: '#1d9bf0',
+                                backgroundColor: 'rgba(29, 155, 240, 0.1)',
+                                tension: 0.4,
+                                fill: true,
+                                borderWidth: 2
+                            },
+                            {
+                                label: '云南雾培豆',
+                                data: [190, 195, 198, 202, 205, 208, 210, 208, 205, 203, 207, 210],
+                                borderColor: '#00ba7c',
+                                backgroundColor: 'rgba(0, 186, 124, 0.1)',
+                                tension: 0.4,
+                                fill: true,
+                                borderWidth: 2
+                            },
+                            {
+                                label: '巴西传统豆',
+                                data: [160, 162, 165, 163, 166, 165, 164, 163, 162, 163, 165, 166],
+                                borderColor: '#f91880',
+                                backgroundColor: 'rgba(249, 24, 128, 0.1)',
+                                tension: 0.4,
+                                fill: true,
+                                borderWidth: 2
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: '#e7e9ea',
+                                    font: {
+                                        family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: false,
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                },
+                                ticks: {
+                                    color: '#71767b',
+                                    callback: function(value) {
+                                        return '¥' + value;
+                                    }
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                },
+                                ticks: {
+                                    color: '#71767b'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // 风险监控图表
+            const riskCtx = document.getElementById('riskChart');
+            if (riskCtx) {
+                const riskChart = new Chart(riskCtx.getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['低风险', '中风险', '高风险'],
+                        datasets: [{
+                            data: [70, 20, 10],
+                            backgroundColor: ['#00ba7c', '#ffd400', '#f91880'],
+                            borderWidth: 0,
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '70%',
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // 仓储热力图
+            const storageCtx = document.getElementById('storageChart');
+            if (storageCtx) {
+                const storageChart = new Chart(storageCtx.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['云南', '巴西', '哥伦比亚', '越南', '埃塞俄比亚', '印尼'],
+                        datasets: [{
+                            label: '仓储量 (吨)',
+                            data: [1850, 3200, 1250, 2800, 850, 1650],
+                            backgroundColor: [
+                                'rgba(29, 155, 240, 0.8)',
+                                'rgba(0, 186, 124, 0.8)',
+                                'rgba(249, 24, 128, 0.8)',
+                                'rgba(255, 212, 0, 0.8)',
+                                'rgba(120, 86, 255, 0.8)',
+                                'rgba(255, 122, 0, 0.8)'
+                            ],
+                            borderColor: [
+                                '#1d9bf0',
+                                '#00ba7c',
+                                '#f91880',
+                                '#ffd400',
+                                '#7856ff',
+                                '#ff7a00'
+                            ],
+                            borderWidth: 1,
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                },
+                                ticks: {
+                                    color: '#71767b'
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                },
+                                ticks: {
+                                    color: '#71767b'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // 页面加载完成后初始化应用
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
